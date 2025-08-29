@@ -123,8 +123,9 @@
       <ProgramDatabaseFile>$(OutDir)PDB\$(TargetName)_$(Configuration)_$(Platform).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)..\SSEditor\$(IntDir)"
+copy "$(OutDir)DLL\$(TargetName)_$(Configuration)_$(Platform)$(TargetExt)" "$(SolutionDir)..\SSEditor\$(IntDir)"
+copy "$(OutDir)PDB\$(TargetName)_$(Configuration)_$(Platform).pdb" "$(SolutionDir)..\SSEditor\$(IntDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,8 +151,9 @@
       <ProgramDatabaseFile>$(OutDir)PDB\$(TargetName)_$(Configuration)_$(Platform).pdb</ProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)..\SSEditor\$(IntDir)"
+copy "$(OutDir)DLL\$(TargetName)_$(Configuration)_$(Platform)$(TargetExt)" "$(SolutionDir)..\SSEditor\$(IntDir)"
+copy "$(OutDir)PDB\$(TargetName)_$(Configuration)_$(Platform).pdb" "$(SolutionDir)..\SSEditor\$(IntDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,6 +161,7 @@
     <ClInclude Include="Private\PCommon\SHasher\HasherPoolBase.h" />
     <ClInclude Include="Private\PWin32\RawInput\Win32RawInputProcessUtil.h" />
     <ClInclude Include="Private\PWin32\RawInput\Win32SSRawInputProcessor.h" />
+    <ClInclude Include="Public\RawInput\IRawInputProcessor.h" />
     <ClInclude Include="Public\RawInput\KeyCodeEnums.h" />
     <ClInclude Include="Public\RawInput\RawInputUtils.h" />
     <ClInclude Include="Public\ModuleEntry\SSEngineDefaultModuleEntry.h" />
@@ -166,6 +169,7 @@
     <ClInclude Include="Public\GeometryType.h" />
     <ClInclude Include="Public\GlobalVariableSet\GlobalVariableSet.h" />
     <ClInclude Include="Public\INoncopyable.h" />
+    <ClInclude Include="Public\RawProfiler\IFrameInfoProcessor.h" />
     <ClInclude Include="Public\RawProfiler\ProfilerUtils.h" />
     <ClInclude Include="Public\RawInput\SSInput.h" />
     <ClInclude Include="Public\RawProfiler\SSFrameInfo.h" />
@@ -176,6 +180,7 @@
     <ClInclude Include="Public\SSContainer\Allocators\InlineAllocator.h" />
     <ClInclude Include="Public\SSContainer\BasicHashFunctionCollection.h" />
     <ClInclude Include="Public\SSContainer\CityHash.h" />
+    <ClInclude Include="Public\SSContainer\ContainerUtil\ContainerUtil.h" />
     <ClInclude Include="Public\SSContainer\FixedList.h" />
     <ClInclude Include="Public\SSContainer\HashMap.h" />
     <ClInclude Include="Public\SSContainer\PooledLinkedList.h" />
@@ -193,8 +198,8 @@
     <ClInclude Include="Public\SSDirectXMathCustom.h" />
     <ClInclude Include="Public\SSEngineDefault.h" />
     <ClInclude Include="Public\SSEngineInlineSettings.h" />
-    <ClInclude Include="Public\RawProfiler\FrameInfoProcessorBase.h" />
-    <ClInclude Include="Public\RawInput\SSRawInputProcessorBase.h" />
+    <ClInclude Include="Private\PCommon\RawProfiler\FrameInfoProcessorBase.h" />
+    <ClInclude Include="Private\PCommon\RawInput\SSRawInputProcessorBase.h" />
     <ClInclude Include="Public\SSNativeKeywords.h" />
     <ClInclude Include="Public\SSNativeTypes.h" />
     <ClInclude Include="Public\SSStaticMath.h" />
@@ -206,7 +211,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Private\PCommon\ModuleEntry\SSEngineDefaultModuleEntry.cpp" />
     <ClCompile Include="Private\PCommon\SHasher\HasherPoolBase.cpp" />
-    <ClCompile Include="Private\PCommon\SHasher\SHasherW.cpp" />
     <ClCompile Include="Private\PCommon\SSContainer\BasicHashFunctionCollection.cpp" />
     <ClCompile Include="Private\PWin32\RawInput\Win32RawInputProcessUtil.cpp" />
     <ClCompile Include="Private\PWin32\RawInput\Win32RawInputUtils.cpp" />
@@ -218,12 +222,9 @@
     <ClCompile Include="Private\PWin32\DeviceQuery.cpp" />
     <ClCompile Include="Private\PWin32\StringUtilityFunctions.cpp" />
     <ClCompile Include="Private\PCommon\SSCommonUtil\SSCustomMemAllocator.cpp" />
-    <ClCompile Include="Private\PCommon\Input\SSRawInputProcessorBase.cpp" />
+    <ClCompile Include="Private\PCommon\RawInput\SSRawInputProcessorBase.cpp" />
     <ClCompile Include="Private\PCommon\TestCodes\TestClasses\TestCustomHeapAllocator.cpp" />
     <ClCompile Include="Private\PCommon\TestCodes\TestFunctions.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="Natvis\SSEngineDefault.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

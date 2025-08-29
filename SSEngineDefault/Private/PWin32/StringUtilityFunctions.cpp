@@ -32,10 +32,19 @@ int32 CharStrToUTF16Str(const char* charStr, int32 charLen, utf16* outUtf16Str, 
 	return multibyteLen;
 }
 
-int32 UTF16StrToCharStr(const utf16* utf16Str, int32 utf16StrLen, char* outCharStr, int32 charLen)
+int32 UTF8StrToUTF16Str(const char* charStr, int32 charLen, utf16* outUtf16Str, int32 utf16StrBufferSize)
+{
+	int32 multibyteLen = MultiByteToWideChar(CP_UTF8, 0, charStr, charLen, nullptr, 0);
+	SS_ASSERT(multibyteLen < utf16StrBufferSize);
+	multibyteLen = MultiByteToWideChar(CP_UTF8, 0, charStr, charLen, outUtf16Str, utf16StrBufferSize);
+	outUtf16Str[multibyteLen] = L'\0';
+	return multibyteLen;
+}
+
+int32 UTF16StrToCharStr(const utf16* utf16Str, int32 utf16StrLen, char* outCharStr, int32 mbBufferSize)
 {
 	int32 writtenBytes = WideCharToMultiByte(CP_ACP, 0, utf16Str, utf16StrLen, NULL, 0, NULL, NULL);
-	SS_ASSERT(writtenBytes < charLen);
+	SS_ASSERT(writtenBytes < mbBufferSize);
 	writtenBytes = WideCharToMultiByte(CP_ACP, 0, utf16Str, utf16StrLen, outCharStr, writtenBytes, NULL, NULL);
 	outCharStr[writtenBytes] = '\0';
 	return writtenBytes;
@@ -118,7 +127,7 @@ void LowerStr(SS::StringW& InStr)
 	}
 }
 
-void ExtractFileNameFromPath(SS::StringW& OutStr, const utf16* inFilePath)
+void ExtractFileNameFromPath(SS::StringW& OutStr, const utf16* inFilePath, bool bIncludeSuffix)
 {
 	OutStr.Clear();
 
@@ -134,4 +143,10 @@ void ExtractFileNameFromPath(SS::StringW& OutStr, const utf16* inFilePath)
 	}
 
 	OutStr = fileNameStart + 1;
+
+	if (bIncludeSuffix == false)
+	{
+		int32 CutOutLen = wcsrchr(OutStr.C_Str(), L'.') - OutStr.C_Str();
+		OutStr.CutOut(CutOutLen);
+	}
 }

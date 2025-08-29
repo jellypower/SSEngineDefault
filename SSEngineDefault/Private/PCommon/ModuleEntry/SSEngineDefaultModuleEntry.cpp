@@ -1,35 +1,36 @@
 #define SSENGINEDEFAULT_MODULE_EXPORT
 #include "SSEngineDefault/Public/ModuleEntry/SSEngineDefaultModuleEntry.h"
 
+#include "SSEngineDefault/Private/PCommon/RawProfiler/FrameInfoProcessorBase.h"
 #include "SSEngineDefault/Private/PCommon/SHasher/HasherPoolBase.h"
 #include "SSEngineDefault/Private/PWin32/RawInput/Win32SSRawInputProcessor.h"
 #include "SSEngineDefault/Public/SSDebugLogger.h"
 
 
 IHasherPool* g_HasherPool = nullptr;
-FrameInfoProcessorBase* g_FrameInfoProcessor = nullptr;
-SSRawInputProcessorBase* g_RawInputProcessor = nullptr;
+IFrameInfoProcessor* g_FrameInfoProcessor = nullptr;
+IRawInputProcessor* g_RawInputProcessor = nullptr;
 
 void SSEngineDefaultModuleEntry(
 	uint32 InHasherPoolCnt,
 	IHasherPool* InHasherPool,
-	FrameInfoProcessorBase* InFrameInfo,
-	SSRawInputProcessorBase* InRawInputProcessor)
+	IFrameInfoProcessor* InFrameInfo,
+	IRawInputProcessor* InRawInputProcessor)
 {
 	g_HasherPool = InHasherPool;
 	g_FrameInfoProcessor = InFrameInfo;
 	g_RawInputProcessor = InRawInputProcessor;
 }
 
-SSRawInputProcessorBase* CreateInputProcessor()
+IRawInputProcessor* CreateInputProcessor()
 {
 	Win32SSRawInputProcessor* InputProcessor = DBG_NEW Win32SSRawInputProcessor();
 	return InputProcessor;
 }
 
-FrameInfoProcessorBase* CreateFrameInfo()
+IFrameInfoProcessor* CreateFrameInfo()
 {
-	FrameInfoProcessorBase* FrameInfo = DBG_NEW FrameInfoProcessorBase();
+	IFrameInfoProcessor* FrameInfo = DBG_NEW FrameInfoProcessorBase();
 	return FrameInfo;
 }
 
