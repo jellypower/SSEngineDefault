@@ -4,22 +4,30 @@
 #include "SSEngineDefault/Private/PCommon/RawProfiler/FrameInfoProcessorBase.h"
 #include "SSEngineDefault/Private/PCommon/SHasher/HasherPoolBase.h"
 #include "SSEngineDefault/Private/PWin32/RawInput/Win32SSRawInputProcessor.h"
+#include "SSEngineDefault/Private/PWin32/SSThread/Win32ThreadManager.h"
+#include "SSEngineDefault/Private/PWin32/WindowManager/Win32WindowManager.h"
 #include "SSEngineDefault/Public/SSDebugLogger.h"
 
-
-IHasherPool* g_HasherPool = nullptr;
+IWindowManager* g_MainWindowManager = nullptr;
 IFrameInfoProcessor* g_FrameInfoProcessor = nullptr;
 IRawInputProcessor* g_RawInputProcessor = nullptr;
+IThreadManager* g_ThreadManager = nullptr;
 
 void SSEngineDefaultModuleEntry(
-	uint32 InHasherPoolCnt,
-	IHasherPool* InHasherPool,
+	IWindowManager* InWindowManager,
 	IFrameInfoProcessor* InFrameInfo,
-	IRawInputProcessor* InRawInputProcessor)
+	IRawInputProcessor* InRawInputProcessor,
+	IThreadManager* InThreadManager)
 {
-	g_HasherPool = InHasherPool;
+	g_MainWindowManager = InWindowManager;
 	g_FrameInfoProcessor = InFrameInfo;
 	g_RawInputProcessor = InRawInputProcessor;
+	g_ThreadManager = InThreadManager;
+}
+
+IWindowManager* CreateWindowManager()
+{
+	return DBG_NEW Win32WindowManager();
 }
 
 IRawInputProcessor* CreateInputProcessor()
@@ -34,8 +42,8 @@ IFrameInfoProcessor* CreateFrameInfo()
 	return FrameInfo;
 }
 
-IHasherPool* CreateHasherPool(int32 InBucketCnt)
+IThreadManager* CreateThreadManager()
 {
-	HasherPoolBase* NewHasherPool = DBG_NEW HasherPoolBase(InBucketCnt);
-	return NewHasherPool;
+	Win32ThreadManager* ThreadManager = DBG_NEW Win32ThreadManager();
+	return ThreadManager;
 }

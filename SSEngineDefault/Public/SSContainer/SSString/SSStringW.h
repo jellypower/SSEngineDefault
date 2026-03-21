@@ -26,11 +26,10 @@ namespace SS {
 			int32 newStrLen = strlen(inStr);
 			if (_stringPool.GetCapacity() < newStrLen)
 			{
-				_stringPool.Reserve(newStrLen * 2);
+				_stringPool.Reserve(newStrLen);
 			}
 			_stringPool.SetSizeDirectly(newStrLen + 1);
 			int32 resultLen = CharStrToUTF16Str(inStr, newStrLen, _stringPool.GetData(), _stringPool.GetCapacity());
-			SS_ASSERT(resultLen != 0);
 		}
 
 
@@ -39,10 +38,11 @@ namespace SS {
 			int32 newStrLen = wcslen(inStr);
 			if (_stringPool.GetCapacity() < newStrLen)
 			{
-				_stringPool.Reserve(newStrLen * 2);
+				_stringPool.Reserve(newStrLen);
 			}
 			_stringPool.SetSizeDirectly(newStrLen + 1);
-			wcscpy_s(_stringPool.GetData(), _stringPool.GetCapacity(), inStr);
+			memmove_s(_stringPool.GetData(), _stringPool.GetCapacity() * sizeof(utf16),
+				inStr, (newStrLen + 1) * sizeof(utf16));
 		}
 
 		StringW(const StringW& rhs)
@@ -50,10 +50,49 @@ namespace SS {
 			int32 newStrLen = rhs.GetStrLen();
 			if (_stringPool.GetCapacity() < newStrLen)
 			{
-				_stringPool.Reserve(newStrLen * 2);
+				_stringPool.Reserve(newStrLen);
 			}
 			_stringPool.SetSizeDirectly(newStrLen + 1);
 			wcscpy_s(_stringPool.GetData(), _stringPool.GetCapacity(), rhs.C_Str());
+		}
+
+
+		StringW(StringW&& rhs) noexcept
+		{
+			_stringPool = SS::move(rhs._stringPool);
+		}
+
+		StringW& operator=(const utf16* inStr)
+		{
+			int32 newStrLen = wcslen(inStr);
+			if (_stringPool.GetCapacity() < newStrLen)
+			{
+				_stringPool.Reserve(newStrLen);
+			}
+			_stringPool.SetSizeDirectly(newStrLen + 1);
+			memmove_s(_stringPool.GetData(), _stringPool.GetCapacity() * sizeof(utf16),
+				inStr, (newStrLen + 1)* sizeof(utf16));
+
+			return *this;
+		}
+
+		StringW& operator=(const StringW& rhs)
+		{
+			int32 newStrLen = rhs.GetStrLen();
+			if (_stringPool.GetCapacity() < newStrLen)
+			{
+				_stringPool.Reserve(newStrLen);
+			}
+			_stringPool.SetSizeDirectly(newStrLen + 1);
+			wcscpy_s(_stringPool.GetData(), _stringPool.GetCapacity(), rhs.C_Str());
+
+			return *this;
+		}
+
+		StringW& operator=(StringW&& rhs) noexcept
+		{
+			_stringPool = SS::move(rhs._stringPool);
+			return *this;
 		}
 
 		FORCEINLINE const utf16* C_Str() const { return _stringPool.GetData(); }
@@ -96,7 +135,7 @@ namespace SS {
 			const int32 newStrDataSize = newStrLen + 1;
 			if (_stringPool.GetCapacity() < newStrDataSize)
 			{
-				_stringPool.Reserve(newStrDataSize * 2);
+				_stringPool.Reserve(newStrDataSize);
 			}
 			_stringPool.SetSizeDirectly(newStrDataSize);
 			CharStrToUTF16Str(inStr, inStrLen, _stringPool.GetData() + originalStrLen, _stringPool.GetCapacity());
@@ -108,7 +147,7 @@ namespace SS {
 			const int32 newStrDataSize = originalStringLen + inStrLen + 1;
 			if (_stringPool.GetCapacity() < newStrDataSize)
 			{
-				_stringPool.Reserve(newStrDataSize * 2);
+				_stringPool.Reserve(newStrDataSize);
 			}
 			_stringPool.SetSizeDirectly(newStrDataSize);
 			wcsncpy(_stringPool.GetData() + originalStringLen, inStr, inStrLen + 1);
